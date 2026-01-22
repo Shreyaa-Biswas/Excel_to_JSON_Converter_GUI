@@ -16,7 +16,9 @@ pip install pandas openpyxl tqdm
 pip install -r requirements.txt
 
 Basic usage:
+
 python Excel_to_JSON.py input.xlsx output.json
 
 Convert without including sheet names:
+
 python Excel_to_JSON.py input.xlsx output.json --no-sheet
