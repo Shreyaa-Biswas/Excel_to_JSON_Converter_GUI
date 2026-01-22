@@ -10,7 +10,7 @@ Features
 5. Progress bar for large files
 6. Pretty-formatted JSON output
 
-Requirements
+Requirements:
 
 pip install pandas openpyxl tqdm
 pip install -r requirements.txt
