@@ -43,7 +43,7 @@ class ExcelToJsonConverter:
         options_frame = tk.Frame(self.root)
         options_frame.pack(pady=10)
         
-        self.include_sheet_var = tk.BooleanVar(value=True)
+        self.include_sheet_var = tk.BooleanVar(value=False)
         tk.Checkbutton(
             options_frame, 
             text="Include sheet name in records", 
@@ -151,20 +151,35 @@ class ExcelToJsonConverter:
             self.update_status(f"Writing {len(all_records)} records to JSON...")
             
             with open(self.output_path, "w", encoding="utf-8") as f:
-                f.write("[")
+                f.write("[\n")
                 
                 for i, record in enumerate(all_records):
-                    if i == 0:
-                        json_str = json.dumps(record, ensure_ascii=False)
-                        f.write(json_str)
-                    else:
-                        f.write(",\n\n ")
-                        json_str = json.dumps(record, ensure_ascii=False, indent=1)
-                        lines = json_str.split('\n')
-                        formatted_lines = [lines[0]] + [' ' + line for line in lines[1:]]
-                        f.write('\n '.join(formatted_lines))
+                    if i > 0:
+                        f.write(",\n")
+                    
+                    f.write("{\n")
+                    
+                    keys = list(record.keys())
+                    for j, key in enumerate(keys):
+                        value = record[key]
+                        
+                        if value is None:
+                            value_str = "null"
+                        elif isinstance(value, str):
+                            value_str = json.dumps(value, ensure_ascii=False)
+                        elif isinstance(value, bool):
+                            value_str = "true" if value else "false"
+                        else:
+                            value_str = json.dumps(value, ensure_ascii=False)
+                        
+                        if j < len(keys) - 1:
+                            f.write(f'   "{key}": {value_str},\n')
+                        else:
+                            f.write(f'   "{key}": {value_str}\n')
+                    
+                    f.write("}")
                 
-                f.write("]")
+                f.write("\n]")
             
             self.conversion_complete(len(all_records))
             
